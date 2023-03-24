@@ -1,0 +1,57 @@
+[
+  {
+    "id": "1",
+    "name": "Stuffed Green Peppers",
+    "price": 9
+  },
+  {
+    "id": "2",
+    "name": "Brocoli & Chicken fry",
+    "price": 12
+  },
+  {
+    "id": "3",
+    "name": "Butter Chicken",
+    "price": 13
+  },
+  {
+    "id": "4",
+    "name": "Calzones",
+    "price": 13
+  },
+  {
+    "id": "5",
+    "name": "Meatballs",
+    "price": 14
+  },
+  {
+    "id": "6",
+    "name": "Quiche",
+    "price": 9
+  },
+  {
+    "id": "7",
+    "name": "Roasted Turkey",
+    "price": 11
+  },
+  {
+    "id": "8",
+    "name": "Roasted Chiekcn",
+    "price": 10
+  },
+  {
+    "id": "9",
+    "name": "Stuffed Meatloaf",
+    "price": 10
+  },
+  {
+    "id": "10",
+    "name": "Mexican Picadillo",
+    "price": 14
+  },
+  {
+    "id": "11",
+    "name": "Cajun Fried Turkey",
+    "price": 12
+  }
+]

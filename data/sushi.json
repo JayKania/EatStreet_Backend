@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "Nigiri",
+    "price": 7
+  },
+  {
+    "id": "2",
+    "name": "Sashimi",
+    "price": 7
+  },
+  {
+    "id": "3",
+    "name": "Chirashi",
+    "price": 7
+  },
+  {
+    "id": "4",
+    "name": "Oshizushi",
+    "price": 9
+  },
+  {
+    "id": "5",
+    "name": "Temaki",
+    "price": 9
+  },
+  {
+    "id": "6",
+    "name": "Uramaki",
+    "price": 9
+  }
+]

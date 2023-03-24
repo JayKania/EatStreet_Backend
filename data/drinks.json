@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "Strawberry-Banana Smoothie",
+    "price": 6
+  },
+  {
+    "id": "2",
+    "name": "Tropical Oatmeal Smoothie",
+    "price": 6
+  },
+  {
+    "id": "3",
+    "name": "Cherry-Almond Smoothie",
+    "price": 6
+  },
+  {
+    "id": "4",
+    "name": "Mango Mule",
+    "price": 8
+  },
+  {
+    "id": "5",
+    "name": "Citrus Fizz",
+    "price": 8
+  },
+  {
+    "id": "6",
+    "name": "Dry Cranberry Spitzer",
+    "price": 8
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1",
+    "name": "Nanaimo Bar",
+    "price": 7
+  },
+  {
+    "id": "2",
+    "name": "Butter Tarts",
+    "price": 7
+  },
+  {
+    "id": "3",
+    "name": "Flapper Pie",
+    "price": 7
+  },
+  {
+    "id": "4",
+    "name": "Blueberry Grunt",
+    "price": 8
+  },
+  {
+    "id": "5",
+    "name": "Pouding Chomeur",
+    "price": 9
+  },
+  {
+    "id": "6",
+    "name": "Saskatoon Berry Pie",
+    "price": 10
+  },
+  {
+    "id": "7",
+    "name": "Tiger Tail Ice Cream",
+    "price": 8
+  },
+  {
+    "id": "8",
+    "name": "Tarte Au Sucre",
+    "price": 8
+  },
+  {
+    "id": "9",
+    "name": "BeaverTails",
+    "price": 9
+  },
+  {
+    "id": "10",
+    "name": "Sweet Bannock",
+    "price": 7
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "name": "Basilicata",
+    "price": 10
+  },
+  {
+    "id": "2",
+    "name": "Calabria",
+    "price": 10
+  },
+  {
+    "id": "3",
+    "name": "Tagliatelle alla Bolognese",
+    "price": 12
+  },
+  {
+    "id": "4",
+    "name": "Ziti alla Norma",
+    "price": 12
+  },
+  {
+    "id": "5",
+    "name": "Pasta al Pesto",
+    "price": 12
+  },
+  {
+    "id": "6",
+    "name": "Agnolotti del Plin",
+    "price": 13
+  },
+  {
+    "id": "7",
+    "name": "Pasta all'Arrabbiata",
+    "price": 14
+  },
+  {
+    "id": "8",
+    "name": "Bucatini all'Amatriciana",
+    "price": 14
+  }
+]
