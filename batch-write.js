@@ -2,12 +2,13 @@ const fs = require("fs");
 const dynamodbClient = require("./db.config");
 const { BatchWriteCommand } = require("@aws-sdk/lib-dynamodb");
 const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
 
 const writeData = async () => {
   const allData = JSON.parse(
     fs.readFileSync("./data/restaurants.json", "utf8")
   );
-  const TABLE_NAME = "restaurants";
+  const TABLE_NAME = "Restaurants";
   try {
     // Loop batch write operation to upload items
     for (let j = 0; j < allData.length; j++) {
@@ -22,6 +23,9 @@ const writeData = async () => {
                   res_name: allData[j].res_name,
                   res_location: allData[j].res_location,
                   res_cusines: allData[j].res_cusines,
+                  res_img: `${process.env.CLOUD_FRONT_URL}/res_img${
+                    j + 1
+                  }.jpeg`,
                   breakfast_menu: allData[j].breakfast_menu,
                   soups_menu: allData[j].soups_menu,
                   pasta_menu: allData[j].pasta_menu,

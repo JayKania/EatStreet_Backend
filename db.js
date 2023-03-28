@@ -4,8 +4,11 @@ const {
   DescribeTableCommand,
 } = require("@aws-sdk/client-dynamodb");
 const dynamodbClient = require("./db.config");
-const { GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { GetCommand, PutCommand } = require("@aws-sdk/lib-dynamodb");
 const fs = require("fs");
+const { v4: uuid } = require("uuid");
+const AWS = require("aws-sdk");
+const bcrypt = require("bcrypt");
 
 const scanTable = async (tableName) => {
   const params = {
@@ -39,9 +42,43 @@ const listTables = async () => {
   }
 };
 
+const addUser = async (userDetails) => {
+  let usersData = await scanTable("users");
+  usersData = usersData.map((user) => {
+    return AWS.DynamoDB.Converter.unmarshall(user);
+  });
+
+  const userExists = usersData?.find((user) => {
+    return user.email === userDetails.email;
+  });
+
+  try {
+    if (!userExists) {
+      const hashedPassword = await bcrypt.hash(userDetails.password, 11);
+      const params = {
+        TableName: "users",
+        Item: {
+          user_id: uuid(),
+          username: userDetails.username,
+          email: userDetails.email,
+          password: hashedPassword,
+          orders: [],
+        },
+      };
+      const data = await dynamodbClient.send(new PutCommand(params));
+      return data;
+    } else {
+      throw { err: "User with this email already exists" };
+    }
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};
+
 const getAllRestaurants = async () => {
   const params = {
-    TableName: "restaurants",
+    TableName: "Restaurants",
   };
   try {
     const data = await dynamodbClient.send(new ScanCommand(params));
@@ -51,24 +88,15 @@ const getAllRestaurants = async () => {
   }
 };
 
-// const getAllRestaurants = async () => {
-//   const allData = await JSON.parse(
-//     fs.readFileSync("./data/restaurants.json", "utf8")
-//   );
-//   console.log(allData);
-//   return allData;
-// };
-
 const getRestaurantByID = async (res_id) => {
   const params = {
-    TableName: "restaurants",
+    TableName: "Restaurants",
     Key: {
       res_id: res_id,
     },
   };
   try {
     const data = await dynamodbClient.send(new GetCommand(params));
-    console.log(data.Item);
     return data.Item;
   } catch (err) {
     return err;
@@ -81,4 +109,5 @@ module.exports = {
   getTableInfo,
   getAllRestaurants,
   getRestaurantByID,
+  addUser,
 };

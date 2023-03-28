@@ -1,7 +1,12 @@
 const express = require("express");
 const AWS = require("aws-sdk");
 const cors = require("cors");
-const { scanTable, getAllRestaurants, getRestaurantByID } = require("./db");
+const {
+  scanTable,
+  getAllRestaurants,
+  getRestaurantByID,
+  addUser,
+} = require("./db");
 const fs = require("fs");
 
 const app = express();
@@ -31,6 +36,17 @@ app.get("/restaurants/:res_id", async (req, res) => {
   let restaurant_detial = await getRestaurantByID(res_id);
   // restaurant_detial = AWS.DynamoDB.Converter.unmarshall(restaurant_detial);
   res.send(restaurant_detial);
+});
+
+app.post("/users", async (req, res) => {
+  const data = req.body;
+  let result = await addUser(data);
+  if (result.err) {
+    return res.status(400).send({
+      message: result.err,
+    });
+  }
+  return res.status(200).send(result);
 });
 
 app.listen(4000, () => {
