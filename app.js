@@ -6,8 +6,8 @@ const {
   getAllRestaurants,
   getRestaurantByID,
   addUser,
+  checkUser,
 } = require("./db");
-const fs = require("fs");
 
 const app = express();
 app.use(express.json());
@@ -38,7 +38,7 @@ app.get("/restaurants/:res_id", async (req, res) => {
   res.send(restaurant_detial);
 });
 
-app.post("/users", async (req, res) => {
+app.post("/signup", async (req, res) => {
   const data = req.body;
   let result = await addUser(data);
   if (result.err) {
@@ -47,6 +47,15 @@ app.post("/users", async (req, res) => {
     });
   }
   return res.status(200).send(result);
+});
+
+app.post("/login", async (req, res) => {
+  const data = req.body;
+  let result = await checkUser(data);
+  if (!result) {
+    return res.status(400).send({ message: "Invalid email or password" });
+  }
+  return res.status(200).send();
 });
 
 app.listen(4000, () => {

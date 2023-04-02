@@ -1,0 +1,34 @@
+{
+  "user_id": 1,
+  "username": "userDetails.username",
+  "email": "userDetails.email",
+  "password": "hashedPassword",
+  "orders": [
+    {
+      "res_id": "1234567",
+      "res_name": "Jewel",
+      "order_items": [
+        {
+          "item_name": "waffle",
+          "item_qty": 2,
+          "item_price": 11
+        }
+      ],
+      "total": 100
+    }
+  ],
+  "cart": [
+    {
+      "res_id": "1234567",
+      "res_name": "Jewel",
+      "order_items": [
+        {
+          "item_name": "waffle",
+          "item_qty": 2,
+          "item_price": 11
+        }
+      ],
+      "total": 100
+    }
+  ]
+}
