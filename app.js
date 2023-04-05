@@ -8,10 +8,23 @@ const {
   addUser,
   checkUser,
 } = require("./db");
+const writeData = require("./batch-write");
+const uploadImages = require("./upload-images");
+// const { writeData } = require("./batch-write");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// writing initial data to the restaurants table and upload images for the same
+writeData();
+uploadImages();
+
+const port = process.env.PORT || 5000;
+
+app.get("/test", async (req, res) => {
+  res.status(200).send("Working!");
+});
 
 app.get("/menu/:category", async (req, res) => {
   let menuItems = await scanTable(req.params.category);
@@ -58,6 +71,6 @@ app.post("/login", async (req, res) => {
   return res.status(200).send();
 });
 
-app.listen(4000, () => {
-  console.log("Listening on port 4000");
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });
