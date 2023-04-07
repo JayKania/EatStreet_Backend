@@ -29,7 +29,7 @@ const uploadImages = () => {
     // Set the S3 upload parameters
     const params = {
       Bucket: "application-bucket-jk",
-      Key: `res_img${index + 1}`,
+      Key: `res_img${index + 1}.jpeg`,
       Body: imageBuffer,
     };
 

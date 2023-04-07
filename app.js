@@ -7,18 +7,21 @@ const {
   getRestaurantByID,
   addUser,
   checkUser,
+  logoutUser,
+  isLoggedIn,
+  addOrder,
+  getOrders,
 } = require("./db");
 const writeData = require("./batch-write");
 const uploadImages = require("./upload-images");
-// const { writeData } = require("./batch-write");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 // writing initial data to the restaurants table and upload images for the same
-writeData();
-uploadImages();
+// writeData();
+// uploadImages();
 
 const port = process.env.PORT || 5000;
 
@@ -47,7 +50,6 @@ app.get("/restaurants", async (req, res) => {
 app.get("/restaurants/:res_id", async (req, res) => {
   const res_id = req.params.res_id;
   let restaurant_detial = await getRestaurantByID(res_id);
-  // restaurant_detial = AWS.DynamoDB.Converter.unmarshall(restaurant_detial);
   res.send(restaurant_detial);
 });
 
@@ -69,6 +71,44 @@ app.post("/login", async (req, res) => {
     return res.status(400).send({ message: "Invalid email or password" });
   }
   return res.status(200).send();
+});
+
+app.post("/logout", async (req, res) => {
+  const data = req.body;
+  let result = await logoutUser(data);
+  if (!result) {
+    return res.status(400).send({ message: "Invalid email!" });
+  }
+  return res.status(200).send();
+});
+
+app.post("/loggedin", async (req, res) => {
+  const data = req.body;
+  let result = await isLoggedIn(data);
+  return res.status(200).send({ isLoggedIn: result });
+});
+
+app.post("/order", async (req, res) => {
+  const data = req.body;
+  console.log(data);
+  const result = await addOrder(data);
+  if (result) {
+    return res.status(200).send();
+  } else {
+    return res.status(500).send({ message: "Internal Server Error!" });
+  }
+});
+
+app.post("/orders", async (req, res) => {
+  const data = req.body;
+  const result = await getOrders(data);
+  if (result) {
+    return res.status(200).send({
+      orders: [...result],
+    });
+  } else {
+    return res.status(500).send({ message: "Internal Server Error!" });
+  }
 });
 
 app.listen(port, () => {
