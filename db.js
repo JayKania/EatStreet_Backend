@@ -13,6 +13,12 @@ const { v4: uuid } = require("uuid");
 const AWS = require("aws-sdk");
 const bcrypt = require("bcrypt");
 const sgMail = require("@sendgrid/mail");
+const {
+  SNSClient,
+  SubscribeCommand,
+  PublishCommand,
+} = require("@aws-sdk/client-sns");
+require("dotenv").config();
 
 const scanTable = async (tableName) => {
   const params = {
@@ -52,6 +58,7 @@ const addUser = async (userDetails) => {
         },
       };
       const data = await dynamodbClient.send(new PutCommand(params));
+      await subscribe(userDetails.email);
       return data;
     } else {
       throw { err: "User with this email already exists" };
@@ -97,6 +104,27 @@ const checkUser = async (userDetails) => {
       }
       return result;
     }
+  }
+};
+
+const checkAdmin = async (adminDetails) => {
+  let adminData = await scanTable("admin");
+  adminData = adminData.map((admin) => {
+    return AWS.DynamoDB.Converter.unmarshall(admin);
+  });
+
+  const adminExists = adminData?.find((admin) => {
+    return admin.email === adminDetails.email;
+  });
+
+  if (!adminExists) {
+    return false;
+  } else {
+    const result = await bcrypt.compare(
+      adminDetails.password,
+      adminExists.password
+    );
+    return result;
   }
 };
 
@@ -186,13 +214,10 @@ const addOrder = async (data) => {
     ":" +
     currentDate.getSeconds();
 
-  console.log(dateTime);
-
   const cart_items = data.cart.cart_items;
 
   let total = 0;
   cart_items.forEach((item) => {
-    console.log(item);
     total += item.item_price * item.item_qty;
   });
 
@@ -236,7 +261,8 @@ const addOrder = async (data) => {
   const result = await dynamodbClient.send(new UpdateItemCommand(params));
   if (result.$metadata.httpStatusCode === 200) {
     // send payment reciept
-    sendEmail(data.email);
+    sendEmail(data.email, cart_items, total);
+    return true;
   } else {
     return false;
   }
@@ -269,33 +295,29 @@ const getOrders = async (data) => {
   return null;
 };
 
-const sendEmail = async (email) => {
-  const recieptHtml = `<table>
+const sendEmail = async (email, cart_items, total) => {
+  let recieptHtml = `<table>
   <tr>
     <th>Item Name</th>
     <th>Quantity</th>
     <th>Price</th>
+  </tr>`;
+  cart_items.forEach((item) => {
+    recieptHtml += `
+    <tr>
+    <td>${item.item_name}</td>
+    <td>${item.item_qty}</td>
+    <td>${item.item_price}</td>
   </tr>
-  <tr>
-    <td>Item 1</td>
-    <td>2</td>
-    <td>$5.00</td>
-  </tr>
-  <tr>
-    <td>Item 2</td>
-    <td>1</td>
-    <td>$10.00</td>
-  </tr>
-  <tr>
-    <td>Item 3</td>
-    <td>3</td>
-    <td>$3.00</td>
-  </tr>
-  <tr>
-    <td colspan="2" class="total">Total</td>
-    <td>$21.00</td>
-  </tr>
-</table>`;
+    `;
+  });
+  recieptHtml += `
+      <tr>
+      <td colspan="2" class="total">Total</td>
+      <td>${total}</td>
+      </tr>
+    </table>
+  `;
 
   const secret_name = "sendgrid_api_key";
 
@@ -319,7 +341,6 @@ const sendEmail = async (email) => {
   };
 
   const secret = await getSecret();
-  console.log(email);
 
   sgMail.setApiKey(secret.SENDGRID_API_KEY);
   const msg = {
@@ -342,14 +363,59 @@ const sendEmail = async (email) => {
   );
 };
 
+const subscribe = async (email) => {
+  const snsClient = new SNSClient({
+    region: "us-east-1",
+  });
+  const params = {
+    Protocol: "email", // Type of communication protocol
+    TopicArn: process.env.SNS_ARN, // ARN of the SNS topic
+    Endpoint: email, // Endpoint for the subscriber
+  };
+  const subscribeCommand = new SubscribeCommand(params);
+  snsClient
+    .send(subscribeCommand)
+    .then((data) => {
+      console.log(
+        `Subscribed to SNS topic with subscription ARN: ${data.SubscriptionArn}`
+      );
+    })
+    .catch((error) => {
+      console.error(`Error subscribing to SNS topic: ${error}`);
+    });
+};
+
+const publish = async (message) => {
+  const snsClient = new SNSClient({
+    region: "us-east-1",
+  });
+
+  // Set up the message parameters
+  const params = {
+    TopicArn: process.env.SNS_ARN, // ARN of the SNS topic
+    Message: message, // Message to be sent to subscribers
+  };
+
+  // Publish the message to the SNS topic
+  const publishCommand = new PublishCommand(params);
+  const result = await snsClient.send(publishCommand);
+  if (result.$metadata.httpStatusCode === 200) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 module.exports = {
   scanTable,
   getAllRestaurants,
   getRestaurantByID,
   addUser,
   checkUser,
+  checkAdmin,
   logoutUser,
   isLoggedIn,
   addOrder,
   getOrders,
+  publish,
 };

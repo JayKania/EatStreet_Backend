@@ -7,13 +7,16 @@ const {
   getRestaurantByID,
   addUser,
   checkUser,
+  checkAdmin,
   logoutUser,
   isLoggedIn,
   addOrder,
   getOrders,
+  publish,
 } = require("./db");
 const writeData = require("./batch-write");
 const uploadImages = require("./upload-images");
+const addAdmin = require("./createAdmin");
 
 const app = express();
 app.use(express.json());
@@ -22,6 +25,7 @@ app.use(cors());
 // writing initial data to the restaurants table and upload images for the same
 // writeData();
 // uploadImages();
+// addAdmin();
 
 const port = process.env.PORT || 5000;
 
@@ -109,6 +113,27 @@ app.post("/orders", async (req, res) => {
   } else {
     return res.status(500).send({ message: "Internal Server Error!" });
   }
+});
+
+app.post("/offers/publish", async (req, res) => {
+  const data = req.body;
+  const result = await publish(data.message);
+  if (result) {
+    return res.status(200).send({
+      message: "Offer published successfully.",
+    });
+  } else {
+    return res.status(500).send({ message: "Internal Server Error!" });
+  }
+});
+
+app.post("/admin/login", async (req, res) => {
+  const data = req.body;
+  let result = await checkAdmin(data);
+  if (!result) {
+    return res.status(400).send({ message: "Invalid email or password" });
+  }
+  return res.status(200).send();
 });
 
 app.listen(port, () => {
