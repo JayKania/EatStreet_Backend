@@ -23,9 +23,9 @@ app.use(express.json());
 app.use(cors());
 
 // writing initial data to the restaurants table and upload images for the same
-// writeData();
-// uploadImages();
-// addAdmin();
+writeData();
+uploadImages();
+addAdmin();
 
 const port = process.env.PORT || 5000;
 
